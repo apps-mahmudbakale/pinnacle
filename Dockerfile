@@ -2,6 +2,13 @@ FROM richarvey/nginx-php-fpm:3.1.6
 
 COPY . .
 
+# Set working directory
+WORKDIR /var/www/html
+
+# Fix permissions for Laravel directories
+RUN chown -R www-data:www-data storage bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache
+
 # Image config
 ENV SKIP_COMPOSER 1
 ENV WEBROOT /var/www/html/public
