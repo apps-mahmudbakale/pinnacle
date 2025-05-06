@@ -1,0 +1,106 @@
+@extends('layouts.welcome')
+@section('meta')
+<meta name="description" content="Welcome to our hotel, where comfort meets luxury. Book your stay with us today!">
+<meta name="keywords" content="hotel, luxury, comfort, booking">
+<meta name="author" content="Your Name">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+@section('title', 'About Us')
+
+@section('content')
+<div class="section big-55-height over-hide z-bigger">
+
+    <div class="parallax parallax-top" style="background-image: url('img/rooms.jpg')"></div>
+    <div class="dark-over-pages"></div>
+
+    <div class="hero-center-section pages">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 parallax-fade-top">
+                    <div class="hero-text">Our Rooms</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section padding-top-bottom-smaller background-dark over-hide z-too-big">
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6 col-xl-4 px-sm-0">
+                            <div class="booking-sep-wrap">
+                                <div class="input-daterange input-group" id="flight-datepicker-1">
+                                    <div class="form-item">
+                                        <span class="fontawesome-calendar"></span>
+                                        <input class="input-sm" type="text" autocomplete="off" id="start-date" name="start" placeholder="check-in" data-date-format="DD, MM d"/>
+                                        <span class="date-text date-depart"></span>
+                                    </div>
+                                    <div class="form-item">
+                                        <span class="fontawesome-calendar"></span>
+                                        <input class="input-sm" type="text" autocomplete="off" id="end-date" name="end" placeholder="check-out" data-date-format="DD, MM d"/>
+                                        <span class="date-text date-return"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-xl-2 px-sm-0">
+                            <div class="quantity">
+                                <input type="number" min="1" max="9999" step="1" value="1" >
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-xl-2 px-sm-0">
+                            <a class="booking-button-big" href="rooms">check<br>availability</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section padding-top-bottom over-hide background-grey">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 align-self-center">
+                <div class="subtitle with-line text-center mb-4">luxury</div>
+                <h3 class="text-center padding-bottom-small">Our rooms</h3>
+            </div>
+            <div class="section clearfix"></div>
+            @foreach(\App\Models\Room::all() as $room)
+            <div class="col-md-6">
+                <div class="room-box background-white">
+                    <div class="room-name">{{$room->name}}</div>
+                    <div class="room-per">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-o"></i>
+                        <i class="fa fa-star-o"></i>
+                        <i class="fa fa-star-o"></i>
+                    </div>
+                    <img src="{{$room->image_path ? url($room->image_path) : url('/assets/img/room_default.png')}}" alt="">
+                    <div class="room-box-in">
+                        <h5 class="">Standard Room</h5>
+                        <!-- <p class="mt-3">The hotel offer 65 Standard room, and each has a king-sized bed and en-suite bathrooms.</p> -->
+                        <a class="mt-4 py-4 btn btn-primary" href="rooms">book from &#8358;{{$room->price}}</a>
+                        <div class="room-icons mt-4 pt-4">
+                            <img src="img/5.svg" alt="">
+                            <img src="img/2.svg" alt="">
+                            <img src="img/3.svg" alt="">
+                            <img src="img/1.svg" alt="">
+                            <a href="#">full info</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+
+        </div>
+
+
+    </div>
+
+
+</div>
+@include('partials.other-services')
+@endsection

@@ -31,9 +31,13 @@ Route::get('/about', function () {
 Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
-Route::get('/rooms', function () {
+Route::get('/room', function () {
     return view('rooms');
 })->name('rooms');
+
+Route::get('/gallery', function () {
+    return view('gallery');
+})->name('gallery');
 
 Route::group(['middleware'=>'auth'],function()
 {
