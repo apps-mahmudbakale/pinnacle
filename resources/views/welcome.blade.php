@@ -288,9 +288,10 @@
                     <h3 class="text-center padding-bottom-small">Our rooms</h3>
                 </div>
                 <div class="section clearfix"></div>
+                @foreach(\App\Models\Room::all() as $room)
                 <div class="col-md-6">
                     <div class="room-box background-white">
-                        <div class="room-name">Standard Room </div>
+                        <div class="room-name">{{$room->name}}</div>
                         <div class="room-per">
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
@@ -298,11 +299,11 @@
                             <i class="fa fa-star-o"></i>
                             <i class="fa fa-star-o"></i>
                         </div>
-                        <img src="images/rooms/5.jpg" alt="">
+                        <img src="{{$room->image_path ? url($room->image_path) : url('/assets/img/room_default.png')}}" alt="">
                         <div class="room-box-in">
                             <h5 class="">Standard Room</h5>
                             <!-- <p class="mt-3">The hotel offer 65 Standard room, and each has a king-sized bed and en-suite bathrooms.</p> -->
-                            <a class="mt-4 py-4 btn btn-primary" href="rooms">book from &#8358;18,000</a>
+                            <a class="mt-4 py-4 btn btn-primary" href="rooms">book from &#8358;{{$room->price}}</a>
                             <div class="room-icons mt-4 pt-4">
                                 <img src="img/5.svg" alt="">
                                 <img src="img/2.svg" alt="">
@@ -313,82 +314,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 mt-4 mt-md-0">
-                    <div class="room-box background-white">
-                        <div class="room-name">Luxury Room</div>
-                        <div class="room-per">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                        </div>
-                        <img src="images/rooms/1.jpeg" alt="">
-                        <div class="room-box-in">
-                            <h5 class="">Luxury Room</h5>
-                            <!-- <p class="mt-3">If you are looking for the luxury room of accomodation at Pinnacle Castle Hotal, Sokoto,</p> -->
-                            <a class="mt-4 py-4 btn btn-primary" href="rooms">book from &#8358;22,000</a>
-                            <div class="room-icons mt-4 pt-4">
-                                <img src="img/4.svg" alt="">
-                                <img src="img/2.svg" alt="">
-                                <img src="img/6.svg" alt="">
-                                <img src="img/3.svg" alt="">
-                                <a href="#">full info</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 mt-4">
-                    <div class="room-box background-white">
-                        <div class="room-name">Executive Room </div>
-                        <div class="room-per">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                        </div>
-                        <img src="executive-room.jpg" alt="">
-                        <div class="room-box-in">
-                            <h5 class="">Executive Room</h5>
-                            <!-- 		<p class="mt-3">Sed ut perspiciatis unde omnis, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et.</p> -->
-                            <a class="mt-4 py-4 btn btn-primary" href="rooms">book from &#8358;25,000</a>
-                            <div class="room-icons mt-4 pt-4">
-                                <img src="img/5.svg" alt="">
-                                <img src="img/2.svg" alt="">
-                                <img src="img/3.svg" alt="">
-                                <img src="img/6.svg" alt="">
-                                <a href="#">full info</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 mt-4">
-                    <div class="room-box background-white">
-                        <div class="room-name">Royal Single Room </div>
-                        <div class="room-per">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                        </div>
-                        <img src="images/rooms/4.jpg" alt="">
-                        <div class="room-box-in">
-                            <h5 class="">Royal Single Room</h5>
-                            <!-- 	<p class="mt-3">Sed ut perspiciatis unde omnis, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et.</p> -->
-                            <a class="mt-4 py-4 btn btn-primary" href="rooms">book from &#8358;45,000</a>
-                            <div class="room-icons mt-4 pt-4">
-                                <img src="img/5.svg" alt="">
-                                <img src="img/2.svg" alt="">
-                                <img src="img/3.svg" alt="">
-                                <img src="img/6.svg" alt="">
-                                <a href="#">full info</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
 
 
