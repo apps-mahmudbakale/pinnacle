@@ -5,7 +5,7 @@
 <meta name="author" content="Your Name">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-@section('title', 'About Us')
+@section('title', 'Gallery')
 
 @section('content')
 <div class="section big-55-height over-hide z-bigger">

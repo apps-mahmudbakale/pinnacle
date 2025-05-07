@@ -39,6 +39,14 @@ Route::get('/gallery', function () {
     return view('gallery');
 })->name('gallery');
 
+Route::get('/restaurant', function () {
+    return view('restaurant');
+})->name('restaurant');
+
+Route::get('/contact-us', function () {
+    return view('contact-us');
+})->name('contact-us');
+
 Route::group(['middleware'=>'auth'],function()
 {
     Route::get('home',function()
