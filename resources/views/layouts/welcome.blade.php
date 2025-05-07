@@ -48,7 +48,7 @@
             <ul>
                 <li><a class="@yield('home_active')" href="{{ url('/') }}">home</a></li>
                 <li><a class="@yield('about_active')" href="{{ url('about') }}">about us</a></li>
-                <li><a class="@yield('rooms_active')" href="{{ url('rooms') }}">rooms</a></li>
+                <li><a class="@yield('rooms_active')" href="{{ url('room') }}">rooms</a></li>
                 <li><a class="@yield('gallery_active')" href="{{ url('gallery') }}">Gallery</a></li>
                 <li><a class="@yield('restaurant_active')" href="{{ url('restaurant') }}">Restaurants</a></li>
                 <li><a class="@yield('contact_active')" href="{{ url('contact-us') }}">contact us</a></li>
