@@ -23,40 +23,34 @@
                             <table class="table table-striped table-hover table-center mb-0" id="RoomsList">
                                 <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th>Name</th>
                                     <th class="text-right">Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($barcodes as $room)
-                                @php
-                                $imagePath = $room->image_path
-                                ? asset('storage/' . $room->image_path)
-                                : asset('assets/img/room_default.png');
-                                @endphp
                                 <tr>
+                                    <td>{{$loop->iteration}}</td>
                                     <td>
                                         <h2 class="table-avatar">
-                                            <a href="#" class="avatar avatar-sm mr-2">
-                                                <img class="avatar-img rounded-circle" src="{{ $imagePath }}" alt="Room Image">
-                                            </a>
                                             <a href="#">{{ $room->name }}
-                                                <span>{{ $room->capacity }} persons</span>
                                             </a>
                                         </h2>
                                     </td>
-                                    <td>{{ $room->description }}</td>
-                                    <td>₦{{ number_format($room->price, 2) }}</td>
                                     <td class="text-right">
                                         <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown">
                                                 <i class="fas fa-ellipsis-v ellipse_color"></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="{{ route('rooms.edit', $room->id) }}">
+                                                <a class="dropdown-item" href="{{ route('barcodes.show', $room->id) }}" target="_blank">
+                                                    <i class="fas fa-eye m-r-5"></i> View
+                                                </a>
+                                                <a class="dropdown-item" href="{{ route('barcodes.edit', $room->id) }}">
                                                     <i class="fas fa-pencil-alt m-r-5"></i> Edit
                                                 </a>
-                                                <form action="{{ route('rooms.destroy', $room->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
+                                                <form action="{{ route('barcodes.destroy', $room->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item text-danger">

@@ -50,7 +50,7 @@ class BarcodeController extends Controller
      */
     public function show(Barcode $barcode)
     {
-        //
+        return view('barcode.show', compact('barcode'));
     }
 
     /**
