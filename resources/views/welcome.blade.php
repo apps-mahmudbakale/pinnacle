@@ -289,6 +289,11 @@
                 </div>
                 <div class="section clearfix"></div>
                 @foreach(\App\Models\Room::all() as $room)
+                @php
+                $imagePath = $room->image_path
+                ? asset('storage/' . $room->image_path)
+                : asset('assets/img/room_default.png');
+                @endphp
                 <div class="col-md-6">
                     <div class="room-box background-white">
                         <div class="room-name">{{$room->name}}</div>
@@ -299,9 +304,9 @@
                             <i class="fa fa-star-o"></i>
                             <i class="fa fa-star-o"></i>
                         </div>
-                        <img src="{{$room->image_path ? url($room->image_path) : url('/assets/img/room_default.png')}}" alt="">
+                        <img src="{{$imagePath}}" alt="">
                         <div class="room-box-in">
-                            <h5 class="">Standard Room</h5>
+                            <h5 class="">{{$room->name}}</h5>
                             <!-- <p class="mt-3">The hotel offer 65 Standard room, and each has a king-sized bed and en-suite bathrooms.</p> -->
                             <a class="mt-4 py-4 btn btn-primary" href="rooms">book from &#8358;{{$room->price}}</a>
                             <div class="room-icons mt-4 pt-4">
