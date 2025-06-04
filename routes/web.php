@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RoomController;
@@ -94,6 +96,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     // ----------------------- user management -------------------------//
     Route::middleware('admin')->group(function () {
         Route::resource('rooms', RoomController::class);
+        Route::resource('bookings', BookingController::class);
         Route::get('get-rooms-data', [RoomController::class, 'getRoomsData'])->name('get-rooms-data');
         // for admin
         Route::controller(UserManagementController::class)->group(function () {

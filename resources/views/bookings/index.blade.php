@@ -8,8 +8,8 @@
             <div class="row align-items-center">
                 <div class="col">
                     <div class="mt-5 d-flex justify-content-between align-items-center">
-                        <h4 class="card-title mt-2">All List Rooms</h4>
-                        <a href="{{ route('rooms.create') }}" class="btn btn-primary">Add Room</a>
+                        <h4 class="card-title mt-2">All List Bookings</h4>
+
                     </div>
                 </div>
             </div>
@@ -30,7 +30,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($rooms as $room)
+                                @foreach($bookings as $room)
                                 @php
                                 $imagePath = $room->image_path
                                 ? asset('storage/' . $room->image_path)

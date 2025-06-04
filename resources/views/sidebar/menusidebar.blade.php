@@ -18,7 +18,7 @@
                     <i class="fas fa-hotel"></i>
                     <span>Rooms</span></a> 
                 </li>
-                <li> <a href="">
+                <li> <a href="{{route('bookings.index')}}">
                     <i class="fas fa-door-open"></i>
                     <span>Bookings</span></a> 
                 </li>
