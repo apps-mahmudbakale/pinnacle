@@ -37,7 +37,10 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Role Name</label>
-                                    <input type="text" class="form-control @error('role_name') is-invalid @enderror" name="role_name" value="{{ old('role_name') }}">
+                                    <select name="role_name" id="" class="form-control">
+                                        <option>Admin User</option>
+                                        <option>User</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-4">

@@ -58,7 +58,7 @@ class BarcodeController extends Controller
      */
     public function edit(Barcode $barcode)
     {
-        //
+        return view('barcode.edit', compact('barcode'));
     }
 
     /**
@@ -66,7 +66,20 @@ class BarcodeController extends Controller
      */
     public function update(Request $request, Barcode $barcode)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'file' => 'nullable|file|mimes:jpg,jpeg,png,pdf,docx,xlsx,txt|max:20480',
+        ]);
+
+        if ($request->hasFile('file')) {
+            $path = $request->file('file')->store('uploads', 'public');
+            $barcode->link = $path;
+        }
+
+        $barcode->name = $request->name;
+        $barcode->save();
+
+        return redirect()->route('barcodes.index')->with('success', 'Barcode updated successfully.');
     }
 
     /**
@@ -74,6 +87,7 @@ class BarcodeController extends Controller
      */
     public function destroy(Barcode $barcode)
     {
-        //
+        $barcode->delete();
+        return redirect()->route('barcodes.index')->with('success', 'File deleted successfully.');
     }
 }

@@ -6,6 +6,7 @@ use App\Models\User;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class UserManagementController extends Controller
 {
@@ -26,6 +27,56 @@ class UserManagementController extends Controller
     {
         return view('usermanagement.useraddnew');
     }
+
+    public  function edit(User $user){
+        return view('usermanagement.edit', compact('user'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'phone_number' => 'nullable|string|max:20',
+            'role_name' => 'nullable|string|max:100',
+            'position' => 'nullable|string|max:100',
+            'department' => 'nullable|string|max:100',
+            'password' => 'nullable|min:6|confirmed',
+            'profile' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        // Update fields
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone_number = $request->phone_number;
+        $user->role_name = $request->role_name;
+        $user->position = $request->position;
+        $user->department = $request->department;
+
+        // Update password only if provided
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // Handle profile image upload
+        if ($request->hasFile('profile')) {
+            // Delete old image if exists
+            if ($user->profile && Storage::exists('public/' . $user->profile)) {
+                Storage::delete('public/' . $user->profile);
+            }
+
+            // Store new image
+            $path = $request->file('profile')->store('profiles', 'public');
+            $user->profile = $path;
+        }
+
+        $user->save();
+
+        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+    }
+
 
     /** get users data */
     public function getUsersData(Request $request)
@@ -122,5 +173,19 @@ class UserManagementController extends Controller
             "aaData"               => $data_arr
         ];
         return response()->json($response);
+    }
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+
+        // Delete profile image from storage if exists
+        if ($user->profile && Storage::exists('public/' . $user->profile)) {
+            Storage::delete('public/' . $user->profile);
+        }
+
+        // Delete the user
+        $user->delete();
+
+        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
 }
