@@ -23,9 +23,12 @@
                             <table class="table table-striped table-hover table-center mb-0" id="RoomsList">
                                 <thead>
                                 <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
                                     <th>Room</th>
-                                    <th>Description</th>
-                                    <th>Price</th>
+                                    <th>Booking Date</th>
                                     <th class="text-right">Action</th>
                                 </tr>
                                 </thead>
