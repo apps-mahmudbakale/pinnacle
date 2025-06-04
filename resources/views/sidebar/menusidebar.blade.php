@@ -10,8 +10,8 @@
                         <span class="menu-arrow"></span>
                     </a>
                     <ul class="submenu_class" style="display: none;">
-                        <li><a class="{{ set_active(['users/list/page']) }}" href="{{ route('users/list/page') }}">All User</a></li>
-                        <li><a class="{{ set_active(['users/add/new']) }}" href="{{ route('users/add/new') }}">Add User</a></li>
+                        <li><a class="{{ set_active(['users']) }}" href="{{ route('users.index') }}">All User</a></li>
+                        <li><a class="{{ set_active(['users/create']) }}" href="{{ route('users.create') }}">Add User</a></li>
                     </ul>
                 </li>
                 <li> <a href="{{ route('rooms.index') }}">
@@ -22,7 +22,7 @@
                     <i class="fas fa-door-open"></i>
                     <span>Bookings</span></a> 
                 </li>
-                <li> <a href="">
+                <li> <a href="{{route('barcodes.index')}}">
                     <i class="fas fa-qrcode"></i>
                     <span>BarCode</span></a> 
                 </li>

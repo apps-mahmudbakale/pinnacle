@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,13 +15,14 @@ class UserManagementController extends Controller
     }
     
     /** user list */
-    public function userList()
+    public function index()
     {
-        return view('usermanagement.listuser');
+        $users = User::all();
+        return view('usermanagement.listuser', compact('users'));
     }
 
     /** add neew users */
-    public function userAddNew()
+    public function create()
     {
         return view('usermanagement.useraddnew');
     }

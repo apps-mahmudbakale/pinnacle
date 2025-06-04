@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
@@ -97,13 +98,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     Route::middleware('admin')->group(function () {
         Route::resource('rooms', RoomController::class);
         Route::resource('bookings', BookingController::class);
+        Route::resource('barcodes', BarcodeController::class);
         Route::get('get-rooms-data', [RoomController::class, 'getRoomsData'])->name('get-rooms-data');
         // for admin
-        Route::controller(UserManagementController::class)->group(function () {
-            Route::get('users/list/page', 'userList')->middleware('auth')->name('users/list/page');
-            Route::get('users/add/new', 'userAddNew')->middleware('auth')->name('users/add/new'); /** add new users */
-            Route::get('get-users-data', 'getUsersData')->name('get-users-data'); /** get all data users */
-        });
+        Route::resource('users',UserManagementController::class);
+
     });
 
     // ----------------------------- main dashboard ------------------------------//

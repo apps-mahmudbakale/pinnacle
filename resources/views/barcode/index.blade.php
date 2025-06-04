@@ -8,8 +8,8 @@
             <div class="row align-items-center">
                 <div class="col">
                     <div class="mt-5 d-flex justify-content-between align-items-center">
-                        <h4 class="card-title mt-2">All List Users</h4>
-                        <a href="{{ route('users.create') }}" class="btn btn-primary">Add User</a>
+                        <h4 class="card-title mt-2">All List Barcodes</h4>
+                        <a href="{{ route('barcodes.create') }}" class="btn btn-primary">Add Barcode</a>
                     </div>
                 </div>
             </div>
@@ -20,45 +20,43 @@
                 <div class="card card-table">
                     <div class="card-body booking_card">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover table-center mb-0" id="UsersList">
+                            <table class="table table-striped table-hover table-center mb-0" id="RoomsList">
                                 <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Role Name</th>
-                                    <th>Last Login</th>
-                                    <th>Phone Number</th>
-                                    <th>Position</th>
-                                    <th>Status</th>
                                     <th class="text-right">Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($users as $user)
+                                @foreach($barcodes as $room)
+                                @php
+                                $imagePath = $room->image_path
+                                ? asset('storage/' . $room->image_path)
+                                : asset('assets/img/room_default.png');
+                                @endphp
                                 <tr>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td>{{ $user->role_name ?? '-' }}</td>
-                                    <td>{{ $user->last_login ?? 'N/A' }}</td>
-                                    <td>{{ $user->phone_number ?? '-' }}</td>
-                                    <td>{{ $user->position ?? '-' }}</td>
                                     <td>
-                                        @if($user->status === 'active')
-                                        <span class="badge badge-success">Active</span>
-                                        @else
-                                        <span class="badge badge-danger">Inactive</span>
-                                        @endif
+                                        <h2 class="table-avatar">
+                                            <a href="#" class="avatar avatar-sm mr-2">
+                                                <img class="avatar-img rounded-circle" src="{{ $imagePath }}" alt="Room Image">
+                                            </a>
+                                            <a href="#">{{ $room->name }}
+                                                <span>{{ $room->capacity }} persons</span>
+                                            </a>
+                                        </h2>
                                     </td>
+                                    <td>{{ $room->description }}</td>
+                                    <td>₦{{ number_format($room->price, 2) }}</td>
                                     <td class="text-right">
                                         <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown">
                                                 <i class="fas fa-ellipsis-v ellipse_color"></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="{{ route('users.edit', $user->id) }}">
+                                                <a class="dropdown-item" href="{{ route('rooms.edit', $room->id) }}">
                                                     <i class="fas fa-pencil-alt m-r-5"></i> Edit
                                                 </a>
-                                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
+                                                <form action="{{ route('rooms.destroy', $room->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item text-danger">
@@ -72,18 +70,18 @@
                                 @endforeach
                                 </tbody>
                             </table>
-                        </div> <!-- .table-responsive -->
-                    </div> <!-- .card-body -->
-                </div> <!-- .card -->
-            </div> <!-- .col -->
-        </div> <!-- .row -->
-    </div> <!-- .container-fluid -->
-</div> <!-- .page-wrapper -->
+                        </div> <!-- table-responsive -->
+                    </div> <!-- card-body -->
+                </div> <!-- card -->
+            </div> <!-- col -->
+        </div> <!-- row -->
+    </div> <!-- container-fluid -->
+</div> <!-- page-wrapper -->
 
 @section('script')
 <script>
-    $(document).ready(function () {
-        $('#UsersList').DataTable(); // Now using client-side mode
+    $(document).ready(function() {
+        $('#RoomsList').DataTable(); // Client-side DataTable only
     });
 </script>
 @endsection
