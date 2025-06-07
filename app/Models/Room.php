@@ -19,4 +19,10 @@ class Room extends Model
         'capacity' => 'integer',
         'price' => 'decimal:2',
     ];
+
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

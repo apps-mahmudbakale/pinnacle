@@ -98,14 +98,15 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     Route::middleware('admin')->group(function () {
         Route::resource('rooms', RoomController::class);
         Route::resource('bookings', BookingController::class);
-        Route::get('bookings/{room}', [BookingController::class, 'book'])->name('bookings.book');
-        Route::get('bookings/verify', [BookingController::class, 'verify'])->name('bookings.verify');
         Route::resource('barcodes', BarcodeController::class);
         Route::get('get-rooms-data', [RoomController::class, 'getRoomsData'])->name('get-rooms-data');
         // for admin
         Route::resource('users',UserManagementController::class);
 
     });
+    Route::get('booking/{room}', [BookingController::class, 'book'])->name('bookings.book');
+    Route::get('/booking/verify/{trxref}', [BookingController::class, 'verify'])->name('bookings.verify');
+    Route::post('booking/store', [BookingController::class, 'store'])->name('booking.store');
 
     // ----------------------------- main dashboard ------------------------------//
     Route::controller(HomeController::class)->group(function () {

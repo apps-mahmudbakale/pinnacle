@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class BookingController extends Controller
 {
@@ -24,43 +27,52 @@ class BookingController extends Controller
         //
     }
 
+    public function book(Room $room)
+    {
+        return view('booking', compact('room'));
+    }
+
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email',
-            'phone' => 'required',
-            'check_in' => 'required|date',
-            'check_out' => 'required|date|after:check_in',
-            'room_id' => 'required|exists:rooms,id',
-        ]);
-
         $room = Room::findOrFail($request->room_id);
         $amount = $room->price;
 
         $reference = Str::uuid();
 
-        Booking::create([
-            'name' => $request->name,
+        $booking = Booking::create([
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
             'email' => $request->email,
             'phone' => $request->phone,
             'room_id' => $room->id,
-            'check_in' => $request->check_in,
-            'check_out' => $request->check_out,
+            'booking_date' => now(),
+            'check_in_date' => $request->check_in,
+            'check_out_date' => $request->check_out,
             'amount' => $amount,
-            'reference' => $reference,
+            'payment_reference' => $reference,
         ]);
 
-        return redirect()->away("https://api.paystack.co/transaction/initialize", [
-            'headers' => ['Authorization' => 'Bearer ' . config('services.paystack.secret')],
-            'json' => [
+        // Initialize transaction with Paystack
+        $response = Http::withToken(config('services.paystack.secret'))->post(
+            'https://api.paystack.co/transaction/initialize',
+            [
                 'email' => $request->email,
-                'amount' => $amount * 100,
+                'amount' => $amount * 100, // amount in kobo
                 'reference' => $reference,
-                'callback_url' => route('booking.verify'),
+                'callback_url' => route('bookings.verify', $reference),
             ]
-        ]);
+        );
+
+//        dd($response->json());
+
+        if ($response->successful() && isset($response['data']['authorization_url'])) {
+            return redirect()->away($response['data']['authorization_url']);
+        }
+
+        // If initialization failed
+        return back()->with('error', 'Failed to initialize payment with Paystack.');
     }
+
 
     public function verify(Request $request)
     {
@@ -70,9 +82,9 @@ class BookingController extends Controller
             ->get("https://api.paystack.co/transaction/verify/{$reference}");
 
         if ($response->successful()) {
-            $booking = Booking::where('reference', $reference)->first();
+            $booking = Booking::where('payment_reference', $reference)->first();
             if ($booking && $response['data']['status'] == 'success') {
-                $booking->status = 'paid';
+                $booking->payment_status = 'paid';
                 $booking->save();
                 return redirect('/')->with('success', 'Booking successful and payment confirmed.');
             }
@@ -93,7 +105,7 @@ class BookingController extends Controller
      */
     public function edit(Booking $booking)
     {
-        //
+
     }
 
     /**
@@ -109,6 +121,7 @@ class BookingController extends Controller
      */
     public function destroy(Booking $booking)
     {
-        //
+        $booking->delete();
+        return redirect()->back()->with('success', 'Booking successful Deleted.');
     }
 }

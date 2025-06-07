@@ -30,10 +30,6 @@
                     <i class="fas fa-image"></i>
                     <span>Media Gallery</span></a> 
                 </li>
-                <li> <a href="">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span></a> 
-                </li>
             </ul>
         </div>
     </div>

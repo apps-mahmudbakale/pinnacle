@@ -14,6 +14,15 @@ class Booking extends Model
         'email',
         'phone',
         'room_id',
-        'booking_date'
+        'booking_date',
+        'check_in_date',
+        'check_out_date',
+        'amount',
+        'payment_reference'
     ];
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
+    }
 }

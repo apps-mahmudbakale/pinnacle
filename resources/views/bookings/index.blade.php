@@ -23,45 +23,42 @@
                             <table class="table table-striped table-hover table-center mb-0" id="RoomsList">
                                 <thead>
                                 <tr>
+                                    <td>#</td>
                                     <th>First Name</th>
                                     <th>Last Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
                                     <th>Room</th>
                                     <th>Booking Date</th>
+                                    <th>Check In Date</th>
+                                    <th>Check Out Date</th>
+                                    <th>Payment Ref</th>
+                                    <th>Payment Status</th>
                                     <th class="text-right">Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($bookings as $room)
-                                @php
-                                $imagePath = $room->image_path
-                                ? asset('storage/' . $room->image_path)
-                                : asset('assets/img/room_default.png');
-                                @endphp
                                 <tr>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="#" class="avatar avatar-sm mr-2">
-                                                <img class="avatar-img rounded-circle" src="{{ $imagePath }}" alt="Room Image">
-                                            </a>
-                                            <a href="#">{{ $room->name }}
-                                                <span>{{ $room->capacity }} persons</span>
-                                            </a>
-                                        </h2>
-                                    </td>
-                                    <td>{{ $room->description }}</td>
-                                    <td>₦{{ number_format($room->price, 2) }}</td>
+                                    <td>{{$loop->iteration}}</td>
+                                    <td>{{ $room->firstname }}</td>
+                                    <td>{{ $room->lastname }}</td>
+                                    <td>{{ $room->email }}</td>
+                                    <td>{{$room->phone}}</td>
+                                    <td>{{$room->room->name}}</td>
+                                    <td>{{$room->booking_date}}</td>
+                                    <td>{{$room->check_in_date}}</td>
+                                    <td>{{$room->check_out_date}}</td>
+                                    <td>{{$room->payment_reference}}</td>
+                                    <td>{{ucfirst($room->payment_status)}}</td>
                                     <td class="text-right">
                                         <div class="dropdown dropdown-action">
                                             <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown">
                                                 <i class="fas fa-ellipsis-v ellipse_color"></i>
                                             </a>
                                             <div class="dropdown-menu dropdown-menu-right">
-                                                <a class="dropdown-item" href="{{ route('rooms.edit', $room->id) }}">
-                                                    <i class="fas fa-pencil-alt m-r-5"></i> Edit
-                                                </a>
-                                                <form action="{{ route('rooms.destroy', $room->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
+
+                                                <form action="{{ route('bookings.destroy', $room->id) }}" method="POST" onsubmit="return confirm('Are you sure?')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="dropdown-item text-danger">
