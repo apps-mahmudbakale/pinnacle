@@ -5,7 +5,7 @@
 <meta name="author" content="Your Name">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-@section('title', 'About Us')
+@section('title', 'Rooms')
 
 @section('content')
 <div class="section big-55-height over-hide z-bigger">
@@ -23,42 +23,7 @@
         </div>
     </div>
 </div>
-<div class="section padding-top-bottom-smaller background-dark over-hide z-too-big">
-    <div class="section">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="row justify-content-center">
-                        <div class="col-md-6 col-xl-4 px-sm-0">
-                            <div class="booking-sep-wrap">
-                                <div class="input-daterange input-group" id="flight-datepicker-1">
-                                    <div class="form-item">
-                                        <span class="fontawesome-calendar"></span>
-                                        <input class="input-sm" type="text" autocomplete="off" id="start-date" name="start" placeholder="check-in" data-date-format="DD, MM d"/>
-                                        <span class="date-text date-depart"></span>
-                                    </div>
-                                    <div class="form-item">
-                                        <span class="fontawesome-calendar"></span>
-                                        <input class="input-sm" type="text" autocomplete="off" id="end-date" name="end" placeholder="check-out" data-date-format="DD, MM d"/>
-                                        <span class="date-text date-return"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-xl-2 px-sm-0">
-                            <div class="quantity">
-                                <input type="number" min="1" max="9999" step="1" value="1" >
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-xl-2 px-sm-0">
-                            <a class="booking-button-big" href="rooms">check<br>availability</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
 <div class="section padding-top-bottom over-hide background-grey">
     <div class="container">
         <div class="row justify-content-center">
