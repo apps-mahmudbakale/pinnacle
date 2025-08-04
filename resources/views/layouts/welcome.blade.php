@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <title>@yield('title') - Pinnacle Guest Inn</title>
     <meta name="description" content="Welcome to Pinnacle Guest Inn Where you get comfort you needed most." />
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    {{-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> --}}
     <meta name="author" content="Pinnacle Guest Inn">
     <meta name="keywords" content="restaurant, hotel, sokoto, good life, meal, cuisines, deserts, menu, Pinnacle, castle, Guest Inn, Pinnacle Guest Inn" />
     <meta property="og:title" content="Pinnacle Guest Inn" />
