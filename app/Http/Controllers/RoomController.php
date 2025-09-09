@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Room;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Brian2694\Toastr\Facades\Toastr;
 
 class RoomController extends Controller
@@ -53,7 +52,9 @@ class RoomController extends Controller
 
         $data_arr = [];
         foreach ($records as $record) {
-            $imagePath = $record->image_path ? url('storage/' . $record->image_path) : url('/assets/img/room_default.png');
+            $imagePath = $record->image_path
+                ? asset($record->image_path)
+                : asset('assets/img/room_default.png');
 
             $roomDetails = '<td>
                                 <h2 class="table-avatar">
@@ -110,7 +111,7 @@ class RoomController extends Controller
         return view('rooms.create');
     }
 
-    // Store new room
+    // Store new room (save images into public/uploads/rooms)
     public function store(Request $request)
     {
         $request->validate([
@@ -123,7 +124,12 @@ class RoomController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('rooms', 'public');
+            $file = $request->file('image');
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/rooms'), $filename);
+
+            // Store relative path
+            $imagePath = 'uploads/rooms/' . $filename;
         }
 
         Room::create([
@@ -156,10 +162,16 @@ class RoomController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            if ($room->image_path && Storage::exists('public/' . $room->image_path)) {
-                Storage::delete('public/' . $room->image_path);
+            // Delete old file if exists
+            if ($room->image_path && file_exists(public_path($room->image_path))) {
+                unlink(public_path($room->image_path));
             }
-            $room->image_path = $request->file('image')->store('rooms', 'public');
+
+            $file = $request->file('image');
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/rooms'), $filename);
+
+            $room->image_path = 'uploads/rooms/' . $filename;
         }
 
         $room->update([
@@ -179,8 +191,8 @@ class RoomController extends Controller
     {
         $room = Room::findOrFail($id);
 
-        if ($room->image_path && Storage::exists('public/' . $room->image_path)) {
-            Storage::delete('public/' . $room->image_path);
+        if ($room->image_path && file_exists(public_path($room->image_path))) {
+            unlink(public_path($room->image_path));
         }
 
         $room->delete();
