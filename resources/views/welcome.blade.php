@@ -214,53 +214,52 @@
                     <h3 class="text-center padding-bottom-small">Our rooms</h3>
                 </div>
                 <div class="section clearfix"></div>
+
                 @foreach(\App\Models\Room::all() as $room)
-                @php
-                $imagePath = $room->image_path
-                ? asset('storage/' . $room->image_path)
-                : asset('assets/img/room_default.png');
-                @endphp
-                <div class="col-md-6">
-                    <div class="room-box background-white">
-                        <div class="room-name">{{$room->name}}</div>
-                        <div class="room-per">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                        </div>
-                        <img src="{{$imagePath}}" alt="">
-                        <div class="room-box-in">
-                            <h5 class="">{{$room->name}}</h5>
-                            <!-- <p class="mt-3">The hotel offer 65 Standard room, and each has a king-sized bed and en-suite bathrooms.</p> -->
-                            <a class="mt-4 py-4 btn btn-primary" href="booking/{{$room->id}}">book from &#8358;{{$room->price}}</a>
-                            <div class="room-icons mt-4 pt-4">
-                                <img src="img/5.svg" alt="">
-                                <img src="img/2.svg" alt="">
-                                <img src="img/3.svg" alt="">
-                                <img src="img/1.svg" alt="">
-                                <a href="#">full info</a>
+                    @php
+                        $imagePath = $room->image_path
+                            ? $room->image_path   // base64
+                            : asset('assets/img/room_default.png');
+                    @endphp
+                    <div class="col-md-6">
+                        <div class="room-box background-white">
+                            <div class="room-name">{{ $room->name }}</div>
+                            <div class="room-per">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                                <i class="fa fa-star-o"></i>
+                            </div>
+
+                            <!-- Base64 image directly -->
+                            <img src="{{ $imagePath }}" alt="{{ $room->name }}">
+
+                            <div class="room-box-in">
+                                <h5>{{ $room->name }}</h5>
+                                <a class="mt-4 py-4 btn btn-primary" href="booking/{{ $room->id }}">
+                                    book from &#8358;{{ $room->price }}
+                                </a>
+                                <div class="room-icons mt-4 pt-4">
+                                    <img src="img/5.svg" alt="">
+                                    <img src="img/2.svg" alt="">
+                                    <img src="img/3.svg" alt="">
+                                    <img src="img/1.svg" alt="">
+                                    <a href="#">full info</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 @endforeach
             </div>
 
-
-        </div>
-
-        <div class="col-md-7" style="margin:0 auto;">
-
-            <hr>
-
-
-            <a class="booking-button-big" href="rooms">check More Room Suites and Pricing</a>
-
-
+            <div class="col-md-7" style="margin:0 auto;">
+                <hr>
+                <a class="booking-button-big" href="rooms">check More Room Suites and Pricing</a>
+            </div>
         </div>
     </div>
+
 
     @include('partials.testimonials')
     <div class="section padding-top-bottom background-grey over-hide">
