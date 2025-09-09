@@ -126,13 +126,15 @@ class RoomController extends Controller
             $file = $request->file('image');
             $filename = uniqid() . '.' . $file->getClientOriginalExtension();
 
-            // Save into public_html/uploads/rooms
-            $file->move(base_path('public_html/uploads/rooms'), $filename);
+            $uploadPath = base_path('public_html/uploads/rooms');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0775, true);
+            }
 
-            // Save relative path in DB
+            $file->move($uploadPath, $filename);
+
             $imagePath = 'uploads/rooms/' . $filename;
         }
-
         Room::create([
             'name' => $request->name,
             'capacity' => $request->capacity,
@@ -163,16 +165,17 @@ class RoomController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            // Delete old file
-            if ($room->image_path && file_exists(base_path('public_html/' . $room->image_path))) {
-                unlink(base_path('public_html/' . $room->image_path));
-            }
-
             $file = $request->file('image');
             $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(base_path('public_html/uploads/rooms'), $filename);
 
-            $room->image_path = 'uploads/rooms/' . $filename;
+            $uploadPath = base_path('public_html/uploads/rooms');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0775, true);
+            }
+
+            $file->move($uploadPath, $filename);
+
+            $imagePath = 'uploads/rooms/' . $filename;
         }
 
         $room->update([
