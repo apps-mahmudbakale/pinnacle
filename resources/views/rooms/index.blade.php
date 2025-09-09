@@ -45,7 +45,8 @@
                                             <td>
                                                 <h2 class="table-avatar">
                                                     <a href="#" class="avatar avatar-sm mr-2">
-                                                        <img class="avatar-img rounded-circle" src="{{ $imagePath }}" alt="Room Image">
+                                                        <img src="{{ $room->image_path ? Storage::url($room->image_path) : asset('assets/img/room_default.png') }}"
+                                                             alt="Room Image" class="avatar-img rounded-circle">
                                                     </a>
                                                     <a href="#">{{ $room->name }}
                                                         <span>{{ $room->capacity }} persons</span>
