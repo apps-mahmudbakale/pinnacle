@@ -32,6 +32,7 @@ class RoomController extends Controller
         $searchValue = $search_arr['value'];
 
         $roomsQuery = DB::table('rooms');
+
         $totalRecords = $roomsQuery->count();
 
         $filteredQuery = clone $roomsQuery;
@@ -51,9 +52,7 @@ class RoomController extends Controller
 
         $data_arr = [];
         foreach ($records as $record) {
-            $imagePath = $record->image_path
-                ? asset($record->image_path)
-                : asset('assets/img/room_default.png');
+            $imagePath = $record->image_path ?: url('/assets/img/room_default.png');
 
             $roomDetails = '<td>
                                 <h2 class="table-avatar">
@@ -124,17 +123,11 @@ class RoomController extends Controller
         $imagePath = null;
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-
-            $uploadPath = base_path('public_html/uploads/rooms');
-            if (!file_exists($uploadPath)) {
-                mkdir($uploadPath, 0775, true);
-            }
-
-            $file->move($uploadPath, $filename);
-
-            $imagePath = 'uploads/rooms/' . $filename;
+            $imageData = base64_encode(file_get_contents($file->getRealPath()));
+            $mimeType = $file->getClientMimeType();
+            $imagePath = "data:$mimeType;base64,$imageData";
         }
+
         Room::create([
             'name' => $request->name,
             'capacity' => $request->capacity,
@@ -166,16 +159,9 @@ class RoomController extends Controller
 
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-
-            $uploadPath = base_path('public_html/uploads/rooms');
-            if (!file_exists($uploadPath)) {
-                mkdir($uploadPath, 0775, true);
-            }
-
-            $file->move($uploadPath, $filename);
-
-            $imagePath = 'uploads/rooms/' . $filename;
+            $imageData = base64_encode(file_get_contents($file->getRealPath()));
+            $mimeType = $file->getClientMimeType();
+            $room->image_path = "data:$mimeType;base64,$imageData";
         }
 
         $room->update([
@@ -194,10 +180,6 @@ class RoomController extends Controller
     public function destroy($id)
     {
         $room = Room::findOrFail($id);
-
-        if ($room->image_path && file_exists(base_path('public_html/' . $room->image_path))) {
-            unlink(base_path('public_html/' . $room->image_path));
-        }
 
         $room->delete();
 
