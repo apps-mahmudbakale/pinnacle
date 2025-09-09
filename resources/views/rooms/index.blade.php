@@ -33,21 +33,23 @@
                                     @foreach($rooms as $room)
                                         @php
                                             $imagePath = $room->image_path
-                                                ? asset($room->image_path)
+                                                ? $room->image_path
                                                 : asset('assets/img/room_default.png');
                                         @endphp
                                         <tr>
                                             <td>
                                                 <h2 class="table-avatar">
                                                     <a href="#" class="avatar avatar-sm mr-2">
-                                                        <img class="avatar-img rounded-circle" src="{{ $imagePath }}" alt="Room Image">
+                                                        <img class="avatar-img rounded-circle"
+                                                             src="{{ $imagePath }}"
+                                                             alt="Room Image">
                                                     </a>
                                                     <a href="#">{{ $room->name }}
                                                         <span>{{ $room->capacity }} persons</span>
                                                     </a>
                                                 </h2>
                                             </td>
-                                            <td>{{ $room->description ?? 'No description' }}</td>
+                                            <td>{{ $room->description }}</td>
                                             <td>₦{{ number_format($room->price, 2) }}</td>
                                             <td class="text-right">
                                                 <div class="dropdown dropdown-action">
@@ -83,7 +85,7 @@
     @section('script')
         <script>
             $(document).ready(function() {
-                $('#RoomsList').DataTable(); // Client-side DataTable only
+                $('#RoomsList').DataTable();
             });
         </script>
     @endsection
