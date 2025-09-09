@@ -32,7 +32,6 @@ class RoomController extends Controller
         $searchValue = $search_arr['value'];
 
         $roomsQuery = DB::table('rooms');
-
         $totalRecords = $roomsQuery->count();
 
         $filteredQuery = clone $roomsQuery;
@@ -111,7 +110,7 @@ class RoomController extends Controller
         return view('rooms.create');
     }
 
-    // Store new room (save images into public/uploads/rooms)
+    // Store new room
     public function store(Request $request)
     {
         $request->validate([
@@ -126,9 +125,11 @@ class RoomController extends Controller
         if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/rooms'), $filename);
 
-            // Store relative path
+            // Save into public_html/uploads/rooms
+            $file->move(base_path('public_html/uploads/rooms'), $filename);
+
+            // Save relative path in DB
             $imagePath = 'uploads/rooms/' . $filename;
         }
 
@@ -162,14 +163,14 @@ class RoomController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            // Delete old file if exists
-            if ($room->image_path && file_exists(public_path($room->image_path))) {
-                unlink(public_path($room->image_path));
+            // Delete old file
+            if ($room->image_path && file_exists(base_path('public_html/' . $room->image_path))) {
+                unlink(base_path('public_html/' . $room->image_path));
             }
 
             $file = $request->file('image');
             $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/rooms'), $filename);
+            $file->move(base_path('public_html/uploads/rooms'), $filename);
 
             $room->image_path = 'uploads/rooms/' . $filename;
         }
@@ -191,8 +192,8 @@ class RoomController extends Controller
     {
         $room = Room::findOrFail($id);
 
-        if ($room->image_path && file_exists(public_path($room->image_path))) {
-            unlink(public_path($room->image_path));
+        if ($room->image_path && file_exists(base_path('public_html/' . $room->image_path))) {
+            unlink(base_path('public_html/' . $room->image_path));
         }
 
         $room->delete();
