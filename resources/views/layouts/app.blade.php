@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
 	<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 	<title>Home Login</title>
-	<link rel="shortcut icon" type="image/x-icon" href="{{URL::to('assets/img/favicon.png')}}">
+	<link rel="shortcut icon" type="image/x-icon" href="{{asset('assets/img/favicon.png')}}">
 	<link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}">
 	<link rel="stylesheet" href="{{asset('assets/plugins/fontawesome/css/fontawesome.min.css')}}">
 	<link rel="stylesheet" type="text/css" href="{{asset('assets/plugins/fontawesome/css/all.min.css')}}">
