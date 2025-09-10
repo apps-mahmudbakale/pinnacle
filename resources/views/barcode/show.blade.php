@@ -5,8 +5,10 @@
     <div class="text-center p-4 border rounded shadow bg-white">
         {{-- QR Code --}}
         <div id="qrcode-wrapper" class="bg-light p-3 rounded">
-            {!! QrCode::size(300)->generate($downloadUrl) !!}
+            {!! QrCode::size(450)->generate($downloadUrl) !!}
         </div>
+
+        {{dd($downloadUrl)}}
 
         {{-- Barcode name --}}
         <h2 class="mt-3">{{ $barcode->name }}</h2>
