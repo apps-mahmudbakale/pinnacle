@@ -25,24 +25,26 @@ class BarcodeController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in storage as Base64.
      */
     public function store(Request $request)
     {
         $request->validate([
+            'name' => 'required|string|max:255',
             'file' => 'required|file|mimes:jpg,jpeg,png,pdf,docx,xlsx,txt|max:20480',
         ]);
 
-        // Upload file
-        $path = $request->file('file')->store('uploads', 'public');
+        // Convert file to Base64
+        $file = $request->file('file');
+        $base64File = 'data:' . $file->getMimeType() . ';base64,' . base64_encode(file_get_contents($file));
 
         // Save to DB
         $barcode = Barcode::create([
-            'name' => request('name'),
-            'link' => $path,
+            'name' => $request->name,
+            'link' => $base64File, // store Base64 instead of path
         ]);
 
-        return redirect()->route('barcodes.index')->with('success', 'File uploaded and QR code generated.');
+        return redirect()->route('barcodes.index')->with('success', 'File uploaded (saved as Base64).');
     }
 
     /**
@@ -62,7 +64,7 @@ class BarcodeController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified resource in storage as Base64.
      */
     public function update(Request $request, Barcode $barcode)
     {
@@ -72,8 +74,9 @@ class BarcodeController extends Controller
         ]);
 
         if ($request->hasFile('file')) {
-            $path = $request->file('file')->store('uploads', 'public');
-            $barcode->link = $path;
+            $file = $request->file('file');
+            $base64File = 'data:' . $file->getMimeType() . ';base64,' . base64_encode(file_get_contents($file));
+            $barcode->link = $base64File;
         }
 
         $barcode->name = $request->name;

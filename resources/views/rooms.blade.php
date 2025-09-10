@@ -48,7 +48,7 @@
                         <i class="fa fa-star-o"></i>
                         <i class="fa fa-star-o"></i>
                     </div>
-                    <img src="{{$imagePath}}" alt="">
+                    <img src="{{$room->image_path}}" alt="">
                     <div class="room-box-in">
                         <h5 class="">{{$room->name}}</h5>
                         <!-- <p class="mt-3">The hotel offer 65 Standard room, and each has a king-sized bed and en-suite bathrooms.</p> -->
