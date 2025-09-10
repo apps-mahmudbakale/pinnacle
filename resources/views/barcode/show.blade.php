@@ -5,7 +5,7 @@
     <div class="text-center p-4 border rounded shadow bg-white">
         {{-- QR Code --}}
         <div id="qrcode-wrapper" class="bg-light p-3 rounded">
-            {!! QrCode::size(450)->generate(asset('storage/' . $barcode->link)) !!}
+            {!! QrCode::size(450)->generate($barcode->link) !!}
         </div>
 
         {{-- Barcode name --}}
