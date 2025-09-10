@@ -102,6 +102,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::get('get-rooms-data', [RoomController::class, 'getRoomsData'])->name('get-rooms-data');
         // for admin
         Route::resource('users',UserManagementController::class);
+        Route::get('/barcodes/{barcode}/download', [BarcodeController::class, 'download'])
+            ->name('barcodes.download');
 
     });
     Route::get('booking/{room}', [BookingController::class, 'book'])->name('bookings.book');

@@ -52,7 +52,44 @@ class BarcodeController extends Controller
      */
     public function show(Barcode $barcode)
     {
-        return view('barcode.show', compact('barcode'));
+        // Generate a short download URL instead of putting Base64 in QR
+        $downloadUrl = route('barcodes.download', $barcode->id);
+
+        return view('barcode.show', compact('barcode', 'downloadUrl'));
+    }
+
+    /**
+     * Download the actual file.
+     */
+    public function download(Barcode $barcode)
+    {
+        if (!$barcode->link) {
+            abort(404, "File not found");
+        }
+
+        // If stored as Base64 in DB
+        if (str_starts_with($barcode->link, 'data:')) {
+            // Decode base64
+            [$meta, $content] = explode(',', $barcode->link, 2);
+            $fileContent = base64_decode($content);
+
+            // Extract MIME type (e.g., image/png)
+            preg_match('/data:(.*?);base64/', $meta, $matches);
+            $mimeType = $matches[1] ?? 'application/octet-stream';
+
+            return Response::make($fileContent, 200, [
+                'Content-Type' => $mimeType,
+                'Content-Disposition' => 'attachment; filename="barcode_file"',
+            ]);
+        }
+
+        // If stored as a file path instead
+        $filePath = storage_path('app/public/' . $barcode->link);
+        if (file_exists($filePath)) {
+            return response()->download($filePath);
+        }
+
+        abort(404, "File not found");
     }
 
     /**
