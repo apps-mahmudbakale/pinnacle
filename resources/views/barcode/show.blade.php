@@ -30,8 +30,8 @@
                         <button id="download-qr-btn" class="btn btn-outline-primary">
                             <i class="fas fa-download me-2"></i>Download QR Code
                         </button>
-                        <a href="{{ route('barcodes.download', $barcode->id) }}" class="btn btn-primary">
-                            <i class="fas fa-file-download me-2"></i>Download File
+                        <a href="{{ route('barcodes.download', $barcode->id) }}" class="btn btn-primary" target="_blank">
+                            <i class="fas fa-external-link-alt me-2"></i>Open File
                         </a>
                     </div>
                 </div>
