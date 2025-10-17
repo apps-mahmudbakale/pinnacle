@@ -52,14 +52,20 @@ class BarcodeController extends Controller
      */
     public function show(Barcode $barcode)
     {
-        // Generate a URL that will open the file directly
-        $downloadUrl = route('barcodes.download', ['barcode' => $barcode->id, 'view' => true]);
+        // Generate a direct URL to the file in storage
+        $fileUrl = asset('storage/' . $barcode->link);
+        
+        // For the QR code, use the direct URL
+        $qrCodeUrl = $fileUrl;
+        
+        // For the download button, we'll still use the route to handle the download
+        $downloadUrl = route('barcodes.download', $barcode->id);
 
-        return view('barcode.show', compact('barcode', 'downloadUrl'));
+        return view('barcode.show', compact('barcode', 'qrCodeUrl', 'downloadUrl'));
     }
 
     /**
-     * Handle file download or viewing.
+     * Handle file download.
      */
     public function download(Barcode $barcode)
     {
@@ -68,20 +74,10 @@ class BarcodeController extends Controller
             abort(404, 'File not found');
         }
 
-        // Get the file path and MIME type
         $filePath = storage_path('app/public/' . $barcode->link);
-        $mimeType = \Storage::disk('public')->mimeType($barcode->link);
         $originalName = pathinfo($barcode->link, PATHINFO_BASENAME);
         
-        // Check if we should open the file in the browser
-        if (request()->has('view')) {
-            return response()->file($filePath, [
-                'Content-Type' => $mimeType,
-                'Content-Disposition' => 'inline; filename="' . $originalName . '"'
-            ]);
-        }
-        
-        // Otherwise, download the file
+        // Force download the file
         return response()->download($filePath, $originalName);
     }
 

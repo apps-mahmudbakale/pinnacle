@@ -13,7 +13,7 @@
                     <div class="mb-4">
                         <h5 class="mb-3">Scan to Download File</h5>
                         <div id="qrcode-wrapper" class="bg-light p-3 rounded d-inline-block">
-                            {!! QrCode::size(300)->generate($downloadUrl) !!}
+                            {!! QrCode::size(300)->generate($qrCodeUrl) !!}
                         </div>
                     </div>
 
@@ -36,7 +36,7 @@
                     </div>
                 </div>
                 <div class="card-footer text-muted text-center">
-                    <small>Scan the QR code or click the download button to get the file</small>
+                    <small>Scan the QR code to open the file, or use the download button to save it</small>
                 </div>
             </div>
         </div>
