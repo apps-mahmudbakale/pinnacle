@@ -1,54 +1,102 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container my-5 d-flex justify-content-center">
-    <div class="text-center p-4 border rounded shadow bg-white">
-        {{-- QR Code --}}
-        <div id="qrcode-wrapper" class="bg-light p-3 rounded">
-            {!! QrCode::size(450)->generate($downloadUrl) !!}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Barcode Details</h4>
+                </div>
+                <div class="card-body text-center">
+                    {{-- QR Code --}}
+                    <div class="mb-4">
+                        <h5 class="mb-3">Scan to Download File</h5>
+                        <div id="qrcode-wrapper" class="bg-light p-3 rounded d-inline-block">
+                            {!! QrCode::size(300)->generate($downloadUrl) !!}
+                        </div>
+                    </div>
+
+                    {{-- File Info --}}
+                    <div class="mb-4">
+                        <h4 class="text-primary">{{ $barcode->name }}</h4>
+                        <p class="text-muted">
+                            Created: {{ $barcode->created_at->format('M d, Y') }}
+                        </p>
+                    </div>
+
+                    {{-- Action Buttons --}}
+                    <div class="d-flex justify-content-center gap-3">
+                        <button id="download-qr-btn" class="btn btn-outline-primary">
+                            <i class="fas fa-download me-2"></i>Download QR Code
+                        </button>
+                        <a href="{{ route('barcodes.download', $barcode->id) }}" class="btn btn-primary">
+                            <i class="fas fa-file-download me-2"></i>Download File
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-muted text-center">
+                    <small>Scan the QR code or click the download button to get the file</small>
+                </div>
+            </div>
         </div>
-
-        {{dd($downloadUrl)}}
-
-        {{-- Barcode name --}}
-        <h2 class="mt-3">{{ $barcode->name }}</h2>
-
-        {{-- Download button --}}
-        <button id="download-btn" class="btn btn-success mt-3">
-            Download QR Code
-        </button>
     </div>
 </div>
 
 {{-- QR Code Download Script --}}
 <script>
-    document.getElementById('download-btn').addEventListener('click', function () {
-        const svg = document.querySelector('#qrcode-wrapper svg');
+    document.addEventListener('DOMContentLoaded', function() {
+        const downloadQrBtn = document.getElementById('download-qr-btn');
+        
+        if (downloadQrBtn) {
+            downloadQrBtn.addEventListener('click', function() {
+                const svg = document.querySelector('#qrcode-wrapper svg');
 
-        if (!svg) {
-            alert("QR code not found.");
-            return;
+                if (!svg) {
+                    alert("QR code not found.");
+                    return;
+                }
+
+                const svgData = new XMLSerializer().serializeToString(svg);
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+                const img = new Image();
+
+                img.onload = function() {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    const pngFile = canvas.toDataURL("image/png");
+                    const downloadLink = document.createElement("a");
+                    downloadLink.download = "{{ Str::slug($barcode->name) }}-qrcode.png";
+                    downloadLink.href = pngFile;
+                    downloadLink.click();
+                };
+
+                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+            });
         }
-
-        const svgData = new XMLSerializer().serializeToString(svg);
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-
-        const img = new Image();
-        img.onload = function () {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-
-            const pngFile = canvas.toDataURL("image/png");
-
-            const downloadLink = document.createElement("a");
-            downloadLink.download = "{{ Str::slug($barcode->name) }}.png";
-            downloadLink.href = pngFile;
-            downloadLink.click();
-        };
-
-        img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
     });
 </script>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .card-header {
+        border-bottom: none;
+        padding: 1.5rem;
+    }
+    .card-body {
+        padding: 2.5rem;
+    }
+    .btn {
+        padding: 0.5rem 1.5rem;
+        border-radius: 5px;
+        font-weight: 500;
+    }
+</style>
 @endsection

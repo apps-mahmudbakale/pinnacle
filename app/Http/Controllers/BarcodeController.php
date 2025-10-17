@@ -34,17 +34,17 @@ class BarcodeController extends Controller
             'file' => 'required|file|mimes:jpg,jpeg,png,pdf,docx,xlsx,txt|max:20480',
         ]);
 
-        // Convert file to Base64
+        // Store the file in storage/app/public/barcodes
         $file = $request->file('file');
-        $base64File = 'data:' . $file->getMimeType() . ';base64,' . base64_encode(file_get_contents($file));
+        $path = $file->store('barcodes', 'public');
 
         // Save to DB
         $barcode = Barcode::create([
             'name' => $request->name,
-            'link' => $base64File, // store Base64 instead of path
+            'link' => $path, // store the path to the file
         ]);
 
-        return redirect()->route('barcodes.index')->with('success', 'File uploaded (saved as Base64).');
+        return redirect()->route('barcodes.index')->with('success', 'File uploaded successfully.');
     }
 
     /**
@@ -63,19 +63,19 @@ class BarcodeController extends Controller
      */
     public function download(Barcode $barcode)
     {
-        // Get the file content from base64
-        $fileContent = base64_decode($barcode->link);
+        // Check if file exists in storage
+        if (!\Storage::disk('public')->exists($barcode->link)) {
+            abort(404, 'File not found');
+        }
 
-        // Detect MIME type (fallback to octet-stream)
-        $finfo = finfo_open();
-        $mimeType = finfo_buffer($finfo, $fileContent, FILEINFO_MIME_TYPE);
-        finfo_close($finfo);
-
-        // Return as a downloadable response
-        return response()->make($fileContent, 200, [
-            'Content-Type' => $mimeType ?: 'application/octet-stream',
-            'Content-Disposition' => 'attachment; filename="' . ($barcode->name ?? 'barcode_file') . '"',
-        ]);
+        // Get the file path
+        $filePath = storage_path('app/public/' . $barcode->link);
+        
+        // Get the original file name with extension
+        $originalName = pathinfo($barcode->link, PATHINFO_BASENAME);
+        
+        // Return the file as a download response
+        return response()->download($filePath, $originalName);
     }
 
     /**
@@ -96,14 +96,20 @@ class BarcodeController extends Controller
             'file' => 'nullable|file|mimes:jpg,jpeg,png,pdf,docx,xlsx,txt|max:20480',
         ]);
 
+        $data = ['name' => $request->name];
+
         if ($request->hasFile('file')) {
+            // Delete old file if exists
+            if ($barcode->link && \Storage::disk('public')->exists($barcode->link)) {
+                \Storage::disk('public')->delete($barcode->link);
+            }
+            
+            // Store the new file
             $file = $request->file('file');
-            $base64File = 'data:' . $file->getMimeType() . ';base64,' . base64_encode(file_get_contents($file));
-            $barcode->link = $base64File;
+            $data['link'] = $file->store('barcodes', 'public');
         }
 
-        $barcode->name = $request->name;
-        $barcode->save();
+        $barcode->update($data);
 
         return redirect()->route('barcodes.index')->with('success', 'Barcode updated successfully.');
     }
