@@ -104,6 +104,8 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::resource('users',UserManagementController::class);
         Route::get('/barcodes/{barcode}/download', [BarcodeController::class, 'download'])
             ->name('barcodes.download');
+        Route::get('/barcode/{barcode}', [BarcodeController::class, 'viewFile'])
+            ->name('barcodes.view');
 
     });
     Route::get('booking/{room}', [BookingController::class, 'book'])->name('bookings.book');

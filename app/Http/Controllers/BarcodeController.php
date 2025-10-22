@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Barcode;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response; // Using the Response facade for downloads
 
 class BarcodeController extends Controller
 {
@@ -31,17 +32,25 @@ class BarcodeController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            // Max 20MB, suitable for Base64 which increases size by about 33%
             'file' => 'required|file|mimes:jpg,jpeg,png,pdf,docx,xlsx,txt|max:20480',
         ]);
 
-        // Store the file in storage/app/public/barcodes
         $file = $request->file('file');
-        $path = $file->store('barcodes', 'public');
 
-        // Save to DB
+        // Read file content and encode it to Base64
+        $base64Data = base64_encode(file_get_contents($file->getRealPath()));
+
+        // Get necessary file metadata
+        $mimeType = $file->getMimeType();
+        $originalFilename = $file->getClientOriginalName();
+
+        // Save Base64 data and metadata to DB
         $barcode = Barcode::create([
             'name' => $request->name,
-            'link' => $path, // store the path to the file
+            'link' => $base64Data, // Now stores Base64 data
+            'mime_type' => $mimeType,
+            'original_filename' => $originalFilename,
         ]);
 
         return redirect()->route('barcodes.index')->with('success', 'File uploaded successfully.');
@@ -52,16 +61,16 @@ class BarcodeController extends Controller
      */
     public function show(Barcode $barcode)
     {
-        // Generate a direct URL to the file in storage
-        $fileUrl = asset('storage/' . $barcode->link);
-        
-        // For the QR code, use the direct URL
-        $qrCodeUrl = $fileUrl;
-        
-        // For the download button, we'll still use the route to handle the download
+        // The QR code and view routes link directly to the controller methods
+        $qrCodeUrl = route('barcodes.view', $barcode->id);
+
+        // For the download button
         $downloadUrl = route('barcodes.download', $barcode->id);
 
-        return view('barcode.show', compact('barcode', 'qrCodeUrl', 'downloadUrl'));
+        // We use the view route as the general file URL
+        $fileUrl = $qrCodeUrl;
+
+        return view('barcode.show', compact('barcode', 'qrCodeUrl', 'downloadUrl', 'fileUrl'));
     }
 
     /**
@@ -69,16 +78,43 @@ class BarcodeController extends Controller
      */
     public function download(Barcode $barcode)
     {
-        // Check if file exists in storage
-        if (!\Storage::disk('public')->exists($barcode->link)) {
-            abort(404, 'File not found');
+        // Check if Base64 data exists
+        if (empty($barcode->link)) {
+            abort(404, 'File data not found');
         }
 
-        $filePath = storage_path('app/public/' . $barcode->link);
-        $originalName = pathinfo($barcode->link, PATHINFO_BASENAME);
-        
-        // Force download the file
-        return response()->download($filePath, $originalName);
+        // Decode the Base64 string
+        $fileContent = base64_decode($barcode->link);
+
+        // Get MIME type and filename from the model
+        $mimeType = $barcode->mime_type ?? 'application/octet-stream';
+        $filename = $barcode->original_filename ?? 'downloaded_file';
+
+        // Return the decoded content as a downloadable response
+        return Response::make($fileContent, 200, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Length' => strlen($fileContent),
+        ]);
+    }
+
+    /**
+     * View the file content (used for embedding/displaying).
+     */
+    public function viewFile(Request $request)
+    {
+        $barcode = Barcode::findOrFail($request->barcode);
+        dd($barcode);
+
+        if (empty($barcode->link)) {
+            abort(404, 'File data not found');
+        }
+
+        // Construct a data URI (data:mime/type;base64,data) for easy display in views
+        // Note: The 'barcode.view' template must use this data URI (e.g., in an <img> or <iframe> tag).
+        $fileUrl = 'data:' . ($barcode->mime_type ?? 'application/octet-stream') . ';base64,' . $barcode->link;
+
+        return view('barcode.view', compact('barcode', 'fileUrl'));
     }
 
     /**
@@ -102,14 +138,16 @@ class BarcodeController extends Controller
         $data = ['name' => $request->name];
 
         if ($request->hasFile('file')) {
-            // Delete old file if exists
-            if ($barcode->link && \Storage::disk('public')->exists($barcode->link)) {
-                \Storage::disk('public')->delete($barcode->link);
-            }
-            
-            // Store the new file
+            // No need to delete old file from storage, as it was stored in the DB.
+
             $file = $request->file('file');
-            $data['link'] = $file->store('barcodes', 'public');
+
+            // Read file content and encode it to Base64
+            $data['link'] = base64_encode(file_get_contents($file->getRealPath()));
+
+            // Get necessary file metadata
+            $data['mime_type'] = $file->getMimeType();
+            $data['original_filename'] = $file->getClientOriginalName();
         }
 
         $barcode->update($data);
@@ -122,6 +160,7 @@ class BarcodeController extends Controller
      */
     public function destroy(Barcode $barcode)
     {
+        // Since the file is stored in the DB, only the record needs to be deleted.
         $barcode->delete();
         return redirect()->route('barcodes.index')->with('success', 'File deleted successfully.');
     }
