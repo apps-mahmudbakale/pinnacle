@@ -104,17 +104,30 @@ class BarcodeController extends Controller
     public function viewFile(Request $request)
     {
         $barcode = Barcode::findOrFail($request->barcode);
-        dd($barcode);
 
         if (empty($barcode->link)) {
             abort(404, 'File data not found');
         }
 
-        // Construct a data URI (data:mime/type;base64,data) for easy display in views
-        // Note: The 'barcode.view' template must use this data URI (e.g., in an <img> or <iframe> tag).
-        $fileUrl = 'data:' . ($barcode->mime_type ?? 'application/octet-stream') . ';base64,' . $barcode->link;
+        // Log the mime type for debugging
+        \Log::info('MIME Type: ' . ($barcode->mime_type ?? 'Not set'));
+        \Log::info('Link length: ' . strlen($barcode->link));
 
-        return view('barcode.view', compact('barcode', 'fileUrl'));
+        // Check if the link is already base64 encoded
+        if (base64_encode(base64_decode($barcode->link, true)) === $barcode->link) {
+            // It's already base64 encoded
+            $fileUrl = 'data:' . ($barcode->mime_type ?? 'application/pdf') . ';base64,' . $barcode->link;
+        } else {
+            // Try encoding it
+            $fileUrl = 'data:' . ($barcode->mime_type ?? 'application/pdf') . ';base64,' . base64_encode($barcode->link);
+        }
+
+        // For debugging, you can uncomment the next line to see the generated URL
+        // dd($fileUrl);
+
+        return response()->view('barcode.view', compact('barcode', 'fileUrl'))
+            ->header('Content-Type', 'text/html')
+            ->header('X-Content-Type-Options', 'nosniff');
     }
 
     /**

@@ -104,10 +104,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::resource('users',UserManagementController::class);
         Route::get('/barcodes/{barcode}/download', [BarcodeController::class, 'download'])
             ->name('barcodes.download');
-        Route::get('/barcode/{barcode}', [BarcodeController::class, 'viewFile'])
-            ->name('barcodes.view');
 
     });
+    Route::get('/barcode/{barcode}', [BarcodeController::class, 'viewFile'])
+        ->name('barcodes.view');
     Route::get('booking/{room}', [BookingController::class, 'book'])->name('bookings.book');
     Route::get('/booking/verify/{trxref}', [BookingController::class, 'verify'])->name('bookings.verify');
     Route::post('booking/store', [BookingController::class, 'store'])->name('booking.store');
